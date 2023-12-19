@@ -1,15 +1,12 @@
 package telran.drones.service;
 
 import java.util.List;
-
-import telran.drones.dto.DroneDto;
-import telran.drones.dto.DroneItem;
-import telran.drones.dto.MedicationDto;
+import telran.drones.dto.*;
 
 public interface DroneService {
 DroneDto registeringDrone(DroneDto droneDto);
-boolean loadingDroneWithMedication (MedicationDto medicationDto);
-boolean cheakMedicationForDrone (DroneDto droneDto, MedicationDto medicationDto);
+HistoryLogDto loadingDroneWithMedication (String serialNumber, String medicationCode);
+boolean cheackLoadedMedicationsForDrone (DroneDto droneDto, List<MedicationDto> medicationItems);
 List<DroneDto> availableDrones (int weight);
 int buttaryLevel (int idDrone);
 List<String> getHistoryOfDrone (int idDrone);

@@ -6,7 +6,7 @@ public record DroneDto(
 		@Size(max = 100) String serialNumber, 
 		@NotNull ModelDrone model, 
 		@Max(500) int weight,
-		@Max(100) @NotNull int butteryCapacity, 
+		@Max(100) @NotNull int butteryLevel, 
 		@NotNull StateDrone state) {
 
 }

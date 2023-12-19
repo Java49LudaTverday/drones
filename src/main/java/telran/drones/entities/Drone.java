@@ -18,7 +18,7 @@ public class Drone {
 	@Column(nullable = false)
 	int weight;
 	@Column(nullable = false)
-	int batteryLevel;
+	int butteryLevel;
 	@Enumerated(EnumType.ORDINAL)
 	@Column(nullable = false)
 	StateDrone state;
@@ -27,8 +27,12 @@ public class Drone {
 		serialNumber = droneDto.serialNumber();
 		model = droneDto.model();
 		weight = droneDto.weight();
-		batteryLevel = droneDto.butteryLevel();
+		butteryLevel = droneDto.butteryLevel();
 		state = droneDto.state();
+	}
+
+	public DroneDto build () {
+		return new DroneDto(serialNumber, model, butteryLevel, butteryLevel, state);
 	}
 
 }

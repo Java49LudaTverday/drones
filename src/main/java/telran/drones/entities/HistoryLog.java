@@ -24,16 +24,16 @@ public class HistoryLog {
 	int butteryPersent;
 	
 	@ManyToOne
-	@Column(name = "drone", nullable = false)
+	@JoinColumn(name="drone", nullable = false)
 	Drone drone;
 	
 	@ManyToOne
-	@Column(name = "medication")
+	@JoinColumn(name="medication", nullable = false)
 	Medication medication;
 
 	public HistoryLog( Drone drone, Medication medication) {
 		super();
-		this.butteryPersent = drone.batteryLevel;
+		this.butteryPersent = drone.butteryLevel;
 		this.drone = drone;
 		this.medication = medication;
 	}
