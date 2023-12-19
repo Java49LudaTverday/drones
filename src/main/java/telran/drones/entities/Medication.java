@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 public class Medication {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	int id;
+	long id;
 	@Column(nullable = false)
 	String name;
 	@Column(nullable = false)
@@ -17,5 +17,11 @@ public class Medication {
 	@Column(nullable = false)
 	String code;
 	
+	public Medication(String name, int weight, String code) {
+		super();
+		this.name = name;
+		this.weight = weight;
+		this.code = code;
+	}	
 
 }

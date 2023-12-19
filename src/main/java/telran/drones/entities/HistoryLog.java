@@ -6,6 +6,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import jakarta.persistence.*;
 import lombok.NoArgsConstructor;
+import telran.drones.dto.HistoryLogDto;
 
 @Entity
 @Table(name = "history_log")
@@ -29,5 +30,18 @@ public class HistoryLog {
 	@ManyToOne
 	@Column(name = "medication")
 	Medication medication;
+
+	public HistoryLog( Drone drone, Medication medication) {
+		super();
+		this.butteryPersent = drone.batteryLevel;
+		this.drone = drone;
+		this.medication = medication;
+	}
+	
+	public HistoryLogDto build () {
+		return new HistoryLogDto(timestamp,butteryPersent,drone,medication);
+	}
+	
+	
 
 }
