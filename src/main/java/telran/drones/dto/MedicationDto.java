@@ -1,5 +1,9 @@
 package telran.drones.dto;
 
-public record MedicationDto(String name, int weight, String code) {
+import jakarta.validation.constraints.*;
 
+public record MedicationDto(
+		@Pattern(regexp = "[\\w-]+") String name, 
+		@NotNull int weight,
+		@Pattern(regexp = "[A-Z0-9_]+") String code) {
 }
