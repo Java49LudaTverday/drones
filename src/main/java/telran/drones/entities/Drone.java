@@ -1,6 +1,7 @@
 package telran.drones.entities;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import telran.drones.dto.DroneDto;
 import telran.drones.dto.ModelDrone;
@@ -9,6 +10,7 @@ import telran.drones.dto.StateDrone;
 @Entity
 @Table(name="drones")
 @NoArgsConstructor
+@Getter
 public class Drone {
 	@Id
 	String serialNumber;
@@ -35,16 +37,8 @@ public class Drone {
 		return new DroneDto(serialNumber, model, butteryLevel, butteryLevel, state);
 	}
 
-	public StateDrone getState() {
-		return state;
-	}
-
 	public void setState(StateDrone state) {
 		this.state = state;
-	}
-
-	public int getButteryLevel() {
-		return butteryLevel;
 	}
 
 	public void setButteryLevel(int butteryLevel) {

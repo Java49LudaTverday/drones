@@ -6,7 +6,7 @@ import telran.drones.dto.*;
 public interface DroneService {
 DroneDto registeringDrone(DroneDto droneDto);
 HistoryLogDto loadingDroneWithMedication (String serialNumber, String medicationCode);
-boolean cheackLoadedMedicationsForDrone (DroneDto droneDto, List<MedicationDto> medicationItems);
+boolean cheackLoadedMedicationsForDrone (String serialNumber, List<MedicationDto> medicationItems);
 List<DroneDto> availableDrones (int weight);
 int buttaryLevel (int idDrone);
 List<String> getHistoryOfDrone (int idDrone);

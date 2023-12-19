@@ -34,11 +34,9 @@ public class DroneServiceImpl implements DroneService {
 	@Override
 	public HistoryLogDto loadingDroneWithMedication(String serialNumber, String medicationCode) {
 		Drone drone = droneRepo.findById(serialNumber).orElseThrow(
-				() -> new NotFoundException(String.format("drone with serial number %s not found",
-						serialNumber)));
-		Medication medication = medicationRepo.findById(medicationCode).orElseThrow(() -> 
-		 new NotFoundException(String.format("medication item with code %s not exists", 
-					medicationCode)));
+				() -> new NotFoundException(String.format("drone with serial number %s not found", serialNumber)));
+		Medication medication = medicationRepo.findById(medicationCode).orElseThrow(
+				() -> new NotFoundException(String.format("medication item with code %s not exists", medicationCode)));
 		drone.setState(StateDrone.LOADING);
 		HistoryLog loadingDrone = new HistoryLog(drone, medication);
 		historyLogRepo.save(loadingDrone);
@@ -46,25 +44,27 @@ public class DroneServiceImpl implements DroneService {
 	}
 
 	@Override
-	public boolean cheackLoadedMedicationsForDrone(DroneDto droneDto, List<MedicationDto> medicationItems) {
-		Drone drone = droneRepo.findById(droneDto.serialNumber()).orElseThrow(() -> 
-		new NotFoundException(String.format("drone with serial number %s not exist ", droneDto.serialNumber())));
-		if(droneDto.butteryLevel() < MIN_BUTTERY_LEVEL) {
-			throw new LowLevelButtery(String.format("level buttery %d for drone %s", 
-					droneDto.butteryLevel(), droneDto.serialNumber()));
+	public boolean cheackLoadedMedicationsForDrone(String serialNumber, List<MedicationDto> medicationItems) {
+		Drone drone = droneRepo.findById(serialNumber).orElseThrow(
+				() -> new NotFoundException(String.format("drone with serial number %s not exist ", serialNumber)));
+		if (drone.getButteryLevel() < MIN_BUTTERY_LEVEL) {
+			throw new LowLevelButtery(
+					String.format("level buttery %d for drone %s", drone.getButteryLevel(), drone.getSerialNumber()));
 		}
 		int weight = getWeightOfMedications(medicationItems);
-		if(droneDto.weight() < weight) {
-			throw new  DroneOverWeight(String.format("medication with code %s is overweight for drone %s"
-					,weight, droneDto.serialNumber()));
+		if (drone.getWeight() < weight) {
+			throw new DroneOverWeight(String.format("medication with code %s is overweight for drone %s", weight,
+					drone.getSerialNumber()));
 		}
 		drone.setState(StateDrone.LOADED);
+		HistoryLog loadedDrone = new HistoryLog(drone, null);
+		historyLogRepo.save(loadedDrone);
 		return true;
 	}
 
 	private int getWeightOfMedications(List<MedicationDto> medicationItems) {
-		
-		return medicationItems.stream().reduce(0, (subtotal, mi) -> subtotal + mi.weight(),Integer::sum);
+
+		return medicationItems.stream().reduce(0, (subtotal, mi) -> subtotal + mi.weight(), Integer::sum);
 	}
 
 	@Override
