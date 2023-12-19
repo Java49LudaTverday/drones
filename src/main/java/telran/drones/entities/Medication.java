@@ -7,14 +7,12 @@ import lombok.NoArgsConstructor;
 @Table(name = "medications")
 @NoArgsConstructor
 public class Medication {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	long id;
+
 	@Column(nullable = false)
 	String name;
 	@Column(nullable = false)
 	int weight;
-	@Column(nullable = false)
+	@Id
 	String code;
 	
 	public Medication(String name, int weight, String code) {

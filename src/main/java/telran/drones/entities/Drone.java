@@ -35,4 +35,20 @@ public class Drone {
 		return new DroneDto(serialNumber, model, butteryLevel, butteryLevel, state);
 	}
 
+	public StateDrone getState() {
+		return state;
+	}
+
+	public void setState(StateDrone state) {
+		this.state = state;
+	}
+
+	public int getButteryLevel() {
+		return butteryLevel;
+	}
+
+	public void setButteryLevel(int butteryLevel) {
+		this.butteryLevel = butteryLevel;
+	}
+
 }
