@@ -1,4 +1,4 @@
-package telran.drone.exeption;
+package telran.drones.exeption;
 
 import java.util.List;
 import java.util.stream.Collectors;
