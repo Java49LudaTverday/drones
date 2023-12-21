@@ -1,5 +1,5 @@
 package telran.drones.dto;
 
-public enum StateDrone {
+public enum State {
 	IDLE, LOADING, LOADED, DELIVERING, DELIVERED, RETURNING
 }

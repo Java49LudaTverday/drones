@@ -1,11 +1,13 @@
 package telran.drones.entities;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "medications")
 @NoArgsConstructor
+@Getter
 public class Medication {
 
 	@Column(nullable = false)

@@ -4,8 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import telran.drones.dto.DroneDto;
-import telran.drones.dto.ModelDrone;
-import telran.drones.dto.StateDrone;
+import telran.drones.dto.ModelType;
+import telran.drones.dto.State;
 
 @Entity
 @Table(name="drones")
@@ -16,32 +16,28 @@ public class Drone {
 	String serialNumber;
 	@Enumerated(EnumType.ORDINAL)
 	@Column(nullable = false)
-	ModelDrone model;
+	ModelType model;
+	@Column(name="weight_limit", nullable = false)
+	int weightLimit;
 	@Column(nullable = false)
-	int weight;
-	@Column(nullable = false)
-	int butteryLevel;
+	byte butteryLevel;
 	@Enumerated(EnumType.ORDINAL)
 	@Column(nullable = false)
-	StateDrone state;
+	State state;
 	
 	public Drone (DroneDto droneDto) {
 		serialNumber = droneDto.serialNumber();
 		model = droneDto.model();
-		weight = droneDto.weight();
+		weightLimit = droneDto.weight();
 		butteryLevel = droneDto.butteryLevel();
 		state = droneDto.state();
 	}
 
-	public DroneDto build () {
-		return new DroneDto(serialNumber, model, butteryLevel, butteryLevel, state);
-	}
-
-	public void setState(StateDrone state) {
+	public void setState(State state) {
 		this.state = state;
 	}
 
-	public void setButteryLevel(int butteryLevel) {
+	public void setButteryLevel(byte butteryLevel) {
 		this.butteryLevel = butteryLevel;
 	}
 

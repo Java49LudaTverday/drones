@@ -18,7 +18,7 @@ public class DroneController {
 	@PostMapping
 	DroneDto registeringDrone (@RequestBody @Valid DroneDto droneDto) {
 		log.debug("method : registeringDrone, received {}", droneDto);
-		return droneService.registeringDrone(droneDto);
+		return droneService.registerDrone(droneDto);
 	}
 
 }

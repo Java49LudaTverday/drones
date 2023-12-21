@@ -4,9 +4,9 @@ import jakarta.validation.constraints.*;
 
 public record DroneDto(
 		@Size(max = 100) String serialNumber, 
-		@NotNull ModelDrone model, 
+		@NotNull ModelType model, 
 		@Max(500) int weight,
-		@Max(100) @NotNull int butteryLevel, 
-		@NotNull StateDrone state) {
+		@Max(100) @NotNull byte butteryLevel, 
+		@NotNull State state) {
 
 }

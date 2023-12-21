@@ -8,7 +8,7 @@ import telran.drones.entities.Medication;
 
 public record HistoryLogDto (
 		LocalDateTime timestamp,
-		StateDrone state,
+		State state,
 		@Max(100)
 		int butteryPersent, 
 		Drone drone, 

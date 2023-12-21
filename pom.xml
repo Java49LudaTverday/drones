@@ -12,7 +12,8 @@
 	<artifactId>drones</artifactId>
 	<version>0.0.1</version>
 	<name>drones</name>
-	<description>WEB service for working with drones data</description>
+	<description>Restful service of Interview task transfering medications using
+		drones</description>
 	<properties>
 		<java.version>17</java.version>
 	</properties>
@@ -50,6 +51,11 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>telran.drones</groupId>
+			<artifactId>drones-medications</artifactId>
+			<version>0.0.1</version>
 		</dependency>
 	</dependencies>
 
