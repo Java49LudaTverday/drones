@@ -31,9 +31,9 @@ public class DroneControllerTest {
 	@Autowired
 	ObjectMapper objectMapper;
 	
-	private static final DroneDto normalDrone = new DroneDto("1234D", ModelDrone.Lightweight, 100, 100, StateDrone.IDLE);
-	private static final DroneDto wrongWeightDrone = new DroneDto("1235D", ModelDrone.Lightweight, 600, 100, StateDrone.IDLE);
-	private static final DroneDto nullStatusDrone = new DroneDto("1235D", ModelDrone.Lightweight, 100, 100, null);
+	private static final DroneDto normalDrone = new DroneDto("1234D", ModelType.Lightweight, 100, (byte)100, State.IDLE);
+	private static final DroneDto wrongWeightDrone = new DroneDto("1235D", ModelType.Lightweight, 600, (byte)100, State.IDLE);
+	private static final DroneDto nullStatusDrone = new DroneDto("1235D", ModelType.Lightweight, 100, (byte)100, null);
 
 	@Test
 	void loadingContextTest() {
@@ -45,7 +45,7 @@ public class DroneControllerTest {
 
 	@Test
 	void registeringDroneNormalFlowTest() throws Exception {
-		when(droneService.registeringDrone(normalDrone)).thenReturn(normalDrone);
+		when(droneService.registerDrone(normalDrone)).thenReturn(normalDrone);
 		String droneJson = objectMapper.writeValueAsString(normalDrone);
 		String response = mockMvc.perform(post("http://localhost:8090/drones")
 				.contentType(MediaType.APPLICATION_JSON)
@@ -56,7 +56,7 @@ public class DroneControllerTest {
 	@Test
 	void alreadyExistRegisteringDroneTest () throws Exception  {
 		 String exceptionMessage = "already exists";
-		when(droneService.registeringDrone(normalDrone)).thenThrow(new IllegalStateException(exceptionMessage));
+		when(droneService.registerDrone(normalDrone)).thenThrow(new IllegalStateException(exceptionMessage));
 		String droneJson = objectMapper.writeValueAsString(normalDrone);
 		String response = mockMvc.perform(post("http://localhost:8090/drones")
 				.contentType(MediaType.APPLICATION_JSON)

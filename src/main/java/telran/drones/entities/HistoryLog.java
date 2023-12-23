@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import org.hibernate.annotations.CreationTimestamp;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import telran.drones.dto.HistoryLogDto;
 import telran.drones.dto.State;
@@ -12,17 +13,18 @@ import telran.drones.dto.State;
 @Entity
 @Table(name = "history_log")
 @NoArgsConstructor
+@Getter
 public class HistoryLog {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	int id;
+	long id;
 //	 @Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "timestamp")
 	@CreationTimestamp
 	LocalDateTime timestamp;
 	
 	@Column(name = "buttery_level", nullable = false)
-	int butteryPersent;
+	byte batteryPersent;
 	
 	@Column(name = "state")
 	State state;
@@ -37,9 +39,13 @@ public class HistoryLog {
 	public HistoryLog( Drone drone, Medication medication) {
 		super();
 		this.state = drone.state;
-		this.butteryPersent = drone.butteryLevel;
+		this.batteryPersent = drone.batteryLevel;
 		this.drone = drone;
 		this.medication = medication;
+	}
+	
+	public HistoryLogDto buildDto () {
+		return new HistoryLogDto(timestamp, state, batteryPersent, drone, medication);
 	}
 	
 }

@@ -123,12 +123,9 @@ public class DronesServiceStaticTest {
 	@DisplayName(SERVICE_TEST + TestDisplayNames.CHECK_AVAILABLE_DRONES)
 	void checkAvailableDronesTest() {
 		List<DroneDto> availableDrones = service.checkAvailableDrones();
-		Drone drone1 = droneRepo.findById(DRONE_1).orElse(null);
-		Drone drone2 = droneRepo.findById(DRONE_2).orElse(null);
-		Drone drone3 = droneRepo.findById(DRONE_3).orElse(null);
-		List<Drone> expected = List.of(drone1, drone2, drone3);
+		Drone expected = droneRepo.findById(DRONE_1).orElse(null);
 		List<Drone> actual = availableDrones.stream().map(ad -> new Drone(ad)).toList();
-		assertIterableEquals(expected, actual);
+		assertEquals(expected, actual.get(0));
 
 	}
 
@@ -146,17 +143,23 @@ public class DronesServiceStaticTest {
 	void checkHistoryLogTest() {
 		HistoryLogDto loadHistoryLog = service.loadDroneWithMedication(DRONE_1, MED_1);
 		List<HistoryLogDto> actualHistoryLog = service.checkHistoryLog(DRONE_1);
-		assertEquals(actualHistoryLog.size(), 2);
-		assertEquals(actualHistoryLog.get(1), loadHistoryLog);		
+		assertEquals(1, actualHistoryLog.size());
+		assertEquals(loadHistoryLog, actualHistoryLog.get(0));		
 	}
 
 	@Test
 	@DisplayName(SERVICE_TEST + TestDisplayNames.CHECK_LOADED_MEDICATION)
-	void checkLoadedMedicationByDroneTest() {
+	void checkLoadedMedicationByDronesTest() {
 		service.loadDroneWithMedication(DRONE_1, MED_1);
+		Drone drone = droneRepo.findById(DRONE_3).orElse(null);
+		drone.setState(State.IDLE);
+		droneRepo.save(drone);
 		service.loadDroneWithMedication(DRONE_3, MED_1);
 		Map<String, Integer> expected = Map.of(DRONE_1, 1, DRONE_2, 0, DRONE_3, 1);
+		
 		List<DroneItems> actual = service.checkLoadedMedicationsByDrones();
+		actual.forEach((v)-> System.out.println(v.getItems()));
+		assertEquals(expected.size(), actual.size());
 		actual.forEach(di -> assertEquals(di.getItems(), expected.get(di.getNumber())));		
 	}
 

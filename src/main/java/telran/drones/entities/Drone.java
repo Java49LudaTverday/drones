@@ -1,44 +1,47 @@
 package telran.drones.entities;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import telran.drones.dto.DroneDto;
-import telran.drones.dto.ModelType;
-import telran.drones.dto.State;
+import lombok.*;
+import telran.drones.dto.*;
 
 @Entity
 @Table(name="drones")
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
+@EqualsAndHashCode
 public class Drone {
-	@Id
+	@Id()
+	@Column(name="serial_number")
 	String serialNumber;
-	@Enumerated(EnumType.ORDINAL)
-	@Column(nullable = false)
+	@Enumerated(EnumType.STRING)
+	@Column(nullable = false, updatable = false)
 	ModelType model;
-	@Column(name="weight_limit", nullable = false)
+	@Column(name="weight_limit", nullable = false, updatable = false)
 	int weightLimit;
-	@Column(nullable = false)
-	byte butteryLevel;
-	@Enumerated(EnumType.ORDINAL)
-	@Column(nullable = false)
-	State state;
-	
-	public Drone (DroneDto droneDto) {
-		serialNumber = droneDto.serialNumber();
-		model = droneDto.model();
-		weightLimit = droneDto.weight();
-		butteryLevel = droneDto.butteryLevel();
-		state = droneDto.state();
-	}
+	@Column(name="battery_level", nullable = false, updatable = true)
+	byte batteryLevel;
+	@Enumerated(EnumType.STRING)
+	@Column(nullable = false, updatable = true)
+	State state;	
 
+	public Drone (DroneDto droneDto) {
+		this.serialNumber = droneDto.getSerialNumber();
+		this.model = droneDto.getModel();
+		this.state = droneDto.getState();
+		this.batteryLevel = droneDto.getBatteryLevel();
+		this.weightLimit = droneDto.getWeight();
+	}
+	public DroneDto buildDto () {
+		return new DroneDto(serialNumber, model, weightLimit, batteryLevel, state);
+	}
+	
 	public void setState(State state) {
 		this.state = state;
 	}
 
-	public void setButteryLevel(byte butteryLevel) {
-		this.butteryLevel = butteryLevel;
+	public void setBatteryLevel(byte batteryLevel) {
+		this.batteryLevel = batteryLevel;
 	}
 
 }
