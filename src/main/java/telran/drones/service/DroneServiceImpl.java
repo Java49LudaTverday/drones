@@ -61,7 +61,7 @@ byte capacityThreshold;
 	}
 
 	@Override
-	public List<MedicationDto> checkMedicationItems(String droneNumber) {
+	public List<MedicationDto> getMedicationItems(String droneNumber) {
 		if(!droneRepo.existsById(droneNumber)) {
 			throw new DroneNotFoundException();
 		}
@@ -84,7 +84,7 @@ byte capacityThreshold;
 	}
 
 	@Override
-	public List<HistoryLogDto> checkHistoryLog(String droneNumber) {
+	public List<HistoryLogDto> getHistoryLog(String droneNumber) {
 		if(!droneRepo.existsById(droneNumber)) {
 			throw new DroneNotFoundException();
 		}
@@ -93,7 +93,7 @@ byte capacityThreshold;
 	}
 
 	@Override
-	public List<DroneItems> checkLoadedMedicationsByDrones() {
+	public List<DroneItems> getLoadedMedicationsByDrones() {
 		
 		return historyLogRepo.findNumberOfMedicationByDrones();
 	}

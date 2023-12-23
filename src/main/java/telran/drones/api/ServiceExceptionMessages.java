@@ -8,4 +8,5 @@ public interface ServiceExceptionMessages {
 	String WEIGHT_LIMIT_VIOLATION = "Dron's weight limit less than medication weight";
 	String NOT_IDLE_STATE = "Loading may be done only in IDLE state";
 	String LOW_BATTERY_LEVEL = "Low Battery Level";
+	
 }

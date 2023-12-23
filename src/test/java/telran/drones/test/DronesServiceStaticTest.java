@@ -68,7 +68,7 @@ public class DronesServiceStaticTest {
 	}
 
 	@Test
-	@DisplayName(SERVICE_TEST + TestDisplayNames.REGISTER_ALREDY_EXIST_DRONE)
+	@DisplayName(SERVICE_TEST + TestDisplayNames.REGISTER_DRONE_ALREDY_EXIST)
 	void registerAlreadyExistsDroneTest() {
 		assertThrowsExactly(DroneAlreadyExistException.class, () -> service.registerDrone(droneDtoAlreadyExist));
 	}
@@ -111,10 +111,10 @@ public class DronesServiceStaticTest {
 	}
 
 	@Test
-	@DisplayName(SERVICE_TEST + TestDisplayNames.CHECK_MEDICATION_ITEMS)
+	@DisplayName(SERVICE_TEST + TestDisplayNames.GET_MEDICATION_ITEMS)
 	void checkMedicationItemsTest() {
 		service.loadDroneWithMedication(DRONE_1, MED_1);
-		List<MedicationDto> actual = service.checkMedicationItems(DRONE_1);
+		List<MedicationDto> actual = service.getMedicationItems(DRONE_1);
 		MedicationDto expected = medicationRepo.findById(MED_1).orElse(null).buildDto();
 		assertEquals(expected, actual.get(0));
 	}
@@ -139,16 +139,16 @@ public class DronesServiceStaticTest {
 	}
 
 	@Test
-	@DisplayName(SERVICE_TEST + TestDisplayNames.CHECK_HISTORY_LOG)
+	@DisplayName(SERVICE_TEST + TestDisplayNames.GET_HISTORY_LOG)
 	void checkHistoryLogTest() {
 		HistoryLogDto loadHistoryLog = service.loadDroneWithMedication(DRONE_1, MED_1);
-		List<HistoryLogDto> actualHistoryLog = service.checkHistoryLog(DRONE_1);
+		List<HistoryLogDto> actualHistoryLog = service.getHistoryLog(DRONE_1);
 		assertEquals(1, actualHistoryLog.size());
 		assertEquals(loadHistoryLog, actualHistoryLog.get(0));		
 	}
 
 	@Test
-	@DisplayName(SERVICE_TEST + TestDisplayNames.CHECK_LOADED_MEDICATION)
+	@DisplayName(SERVICE_TEST + TestDisplayNames.GET_LOADED_MEDICATION)
 	void checkLoadedMedicationByDronesTest() {
 		service.loadDroneWithMedication(DRONE_1, MED_1);
 		Drone drone = droneRepo.findById(DRONE_3).orElse(null);
@@ -157,7 +157,7 @@ public class DronesServiceStaticTest {
 		service.loadDroneWithMedication(DRONE_3, MED_1);
 		Map<String, Integer> expected = Map.of(DRONE_1, 1, DRONE_2, 0, DRONE_3, 1);
 		
-		List<DroneItems> actual = service.checkLoadedMedicationsByDrones();
+		List<DroneItems> actual = service.getLoadedMedicationsByDrones();
 		actual.forEach((v)-> System.out.println(v.getItems()));
 		assertEquals(expected.size(), actual.size());
 		actual.forEach(di -> assertEquals(di.getItems(), expected.get(di.getNumber())));		
