@@ -122,7 +122,7 @@ public class DronesServiceStaticTest {
 	@Test
 	@DisplayName(SERVICE_TEST + TestDisplayNames.CHECK_AVAILABLE_DRONES)
 	void checkAvailableDronesTest() {
-		List<DroneDto> availableDrones = service.checkAvailableDrones();
+		List<DroneDto> availableDrones = service.getAvailableDrones();
 		Drone expected = droneRepo.findById(DRONE_1).orElse(null);
 		List<Drone> actual = availableDrones.stream().map(ad -> new Drone(ad)).toList();
 		assertEquals(expected, actual.get(0));

@@ -11,13 +11,14 @@ package telran.exceptions;
 	import org.springframework.web.bind.annotation.ControllerAdvice;
 	import org.springframework.web.bind.annotation.ExceptionHandler;
 
-	import lombok.extern.slf4j.Slf4j;
+import jakarta.validation.ConstraintViolationException;
+import lombok.extern.slf4j.Slf4j;
 
 	@ControllerAdvice
 	@Slf4j
 	public class GlobalExceptionsHandler {
 		
-		@ExceptionHandler(MethodArgumentNotValidException.class)
+		@ExceptionHandler({MethodArgumentNotValidException.class})
 		ResponseEntity<String> handlerMethodArgument(MethodArgumentNotValidException e) {
 			List<ObjectError> errors = e.getAllErrors();
 			String body = errors.stream().map(err -> err.getDefaultMessage())
@@ -28,11 +29,15 @@ package telran.exceptions;
 			log.error(body);
 			return new ResponseEntity<>(body, status);
 		}
-	@ExceptionHandler({IllegalStateException.class, IllegalArgumentException.class, HttpMessageNotReadableException.class})
+	@ExceptionHandler({IllegalStateException.class, 
+		IllegalArgumentException.class,
+		HttpMessageNotReadableException.class,
+		ConstraintViolationException.class})
 	ResponseEntity<String> badRequest(Exception e) {
 		String message = e.getMessage();
 		return errorResponse(message, HttpStatus.BAD_REQUEST);
 	}
+	
 	@ExceptionHandler({NotFoundException.class})
 	ResponseEntity<String> notFound(NotFoundException e) {
 		String message = e.getMessage();

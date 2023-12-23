@@ -21,5 +21,6 @@ String GET_MEDICATION_ITEMS_WRONG_DRONE = "Checking method getMedicationItems fo
 String GET_HISTORY_LOG_WRONG_DRONE = "Trying get medication for wrond drone`s number";
 String CHECK_BATTERY_LEVEL_WRONG_NUMBER ="Trying check battery level for wrong drone`s number";
 String GET_LOADED_MEDICATION_WRONG_DRONE = "Trying get medication items for wrong drone`s number";
+String CHECK_BATTERY_LEVEL_ILLEGAL_NUMBER = "Trying send illegal drone`s number and get battery level";
 
 }

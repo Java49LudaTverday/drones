@@ -7,7 +7,7 @@ public interface DroneService {
 DroneDto registerDrone(DroneDto droneDto);
 HistoryLogDto loadDroneWithMedication (String droneNumber, String medicationCode);
 List<MedicationDto> getMedicationItems (String droneNumber);
-List<DroneDto> checkAvailableDrones ();
+List<DroneDto> getAvailableDrones ();
 int checkBatteryLevel (String droneNumber);
 List<HistoryLogDto> getHistoryLog (String droneNumber);
 List<DroneItems> getLoadedMedicationsByDrones();

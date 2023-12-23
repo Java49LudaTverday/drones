@@ -70,7 +70,7 @@ byte capacityThreshold;
 	}
 
 	@Override
-	public List<DroneDto> checkAvailableDrones() {
+	public List<DroneDto> getAvailableDrones() {
 		
 		return droneRepo.findByStateAndBatteryLevelGreaterThan(State.IDLE, capacityThreshold).stream().map(d -> d.buildDto()).toList();
 	}

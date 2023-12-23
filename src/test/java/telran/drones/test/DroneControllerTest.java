@@ -2,6 +2,7 @@ package telran.drones.test;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -19,8 +20,11 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import jakarta.validation.ConstraintViolationException;
 
 import static telran.drones.api.ServiceExceptionMessages.*;
 
@@ -46,8 +50,9 @@ public class DroneControllerTest {
 	ObjectMapper objectMapper;
 	private static final String HOST = "http://localhost:8090/";
 	private static final String CONTROLLER_TEST = "Controller ";
+	private static final String WRONG_DRONE_NUMBER  = new String(new char[10000]);
 	DroneDto normalDrone = new DroneDto("Drone-4", ModelType.Middleweight, 100, (byte) 300, State.IDLE);
-	DroneDto droneDtoWrongFields = new DroneDto(new String(new char[10000]), ModelType.Middleweight, 600, (byte) 101,
+	DroneDto droneDtoWrongFields = new DroneDto(WRONG_DRONE_NUMBER, ModelType.Middleweight, 600, (byte) 101,
 			State.IDLE);
 	DroneDto droneDtoMissingFields = new DroneDto(null, null, null, null, null);
 	
@@ -199,13 +204,13 @@ public class DroneControllerTest {
 	@Test
 	@DisplayName(CONTROLLER_TEST + TestDisplayNames.GET_LOADED_MEDICATION)
 	void getMedicationItemsTest () throws Exception {
-		
-	when(droneService.getMedicationItems(DRONE_1)).thenReturn(List.of(MED_DTO));
+	List<MedicationDto> list = List.of(MED_DTO);	
+	when(droneService.getMedicationItems(DRONE_1)).thenReturn(list);
 		String response = mockMvc
-				.perform(post(HOST + "drones/items/{number}", DRONE_1))
-				.andDo(print()).andExpect(status().isBadRequest())
+				.perform(get(HOST + "drones/items/{number}", DRONE_1))
+				.andDo(print()).andExpect(status().isOk())
 				.andReturn().getResponse().getContentAsString();
-		String expected = objectMapper.writeValueAsString(MED_DTO);
+		String expected = objectMapper.writeValueAsString(list);
 		assertEquals(expected, response);
 	}
 	
@@ -215,7 +220,7 @@ public class DroneControllerTest {
 		when(droneService.getMedicationItems(NOT_EXIST_DRONE_4))
 		.thenThrow(new DroneNotFoundException());
 		String response = mockMvc
-				.perform(post(HOST + "drones/items/{number}", NOT_EXIST_DRONE_4))
+				.perform(get(HOST + "drones/items/{number}", NOT_EXIST_DRONE_4))
 				.andDo(print()).andExpect(status().isNotFound())
 				.andReturn().getResponse().getContentAsString();
 		assertEquals(DRONE_NOT_FOUND, response);
@@ -228,10 +233,10 @@ public class DroneControllerTest {
 		when(droneService.checkBatteryLevel(DRONE_1))
 		.thenReturn(batteryLevel);
 		String response = mockMvc
-				.perform(post(HOST + "drones/battery/{number}", DRONE_1))
+				.perform(get(HOST + "drones/battery/{number}", DRONE_1))
 				.andDo(print()).andExpect(status().isOk())
 				.andReturn().getResponse().getContentAsString();
-		assertEquals(batteryLevel, response);
+		assertEquals("100", response);
 	}
 	
 	@Test
@@ -240,7 +245,7 @@ public class DroneControllerTest {
 		when(droneService.checkBatteryLevel(NOT_EXIST_DRONE_4))
 		.thenThrow(new DroneNotFoundException());
 		String response = mockMvc
-				.perform(post(HOST + "drones/battery/{number}", NOT_EXIST_DRONE_4))
+				.perform(get(HOST + "drones/battery/{number}", NOT_EXIST_DRONE_4))
 				.andDo(print()).andExpect(status().isNotFound())
 				.andReturn().getResponse().getContentAsString();
 		assertEquals(DRONE_NOT_FOUND, response);
@@ -253,7 +258,7 @@ public class DroneControllerTest {
 		when(droneService.getHistoryLog(DRONE_1))
 		.thenReturn(logs);
 		String response = mockMvc
-				.perform(post(HOST + "drones/logs/{number}", DRONE_1))
+				.perform(get(HOST + "drones/logs/{number}", DRONE_1))
 				.andDo(print()).andExpect(status().isOk())
 				.andReturn().getResponse().getContentAsString();
 		String expected = objectMapper.writeValueAsString(logs);
@@ -266,7 +271,7 @@ public class DroneControllerTest {
 		when(droneService.getHistoryLog(NOT_EXIST_DRONE_4))
 		.thenThrow(new DroneNotFoundException());
 		String response = mockMvc
-				.perform(post(HOST + "drones/logs/{number}", NOT_EXIST_DRONE_4))
+				.perform(get(HOST + "drones/logs/{number}", NOT_EXIST_DRONE_4))
 				.andDo(print()).andExpect(status().isNotFound())
 				.andReturn().getResponse().getContentAsString();
 		assertEquals(DRONE_NOT_FOUND, response);
@@ -279,13 +284,35 @@ public class DroneControllerTest {
 		when(droneService.getHistoryLog(DRONE_1))
 		.thenReturn(emptyList);
 		String response = mockMvc
-				.perform(post(HOST + "drones/logs/{number}", DRONE_1))
+				.perform(get(HOST + "drones/logs/{number}", DRONE_1))
 				.andDo(print()).andExpect(status().isOk())
 				.andReturn().getResponse().getContentAsString();
 		String expected = objectMapper.writeValueAsString(emptyList);
 		assertEquals(expected, response);
 	}
-
 	
+	@Test
+	@DisplayName(CONTROLLER_TEST + TestDisplayNames.GET_HISTORY_LOG)
+	void getAvailableDronesTest () throws Exception {
+		List<DroneDto> drones = List.of(normalDrone);
+		when(droneService.getAvailableDrones())
+		.thenReturn(drones);
+		String response = mockMvc
+				.perform(get(HOST + "drones/get_drones"))
+				.andDo(print()).andExpect(status().isOk())
+				.andReturn().getResponse().getContentAsString();
+		String expected = objectMapper.writeValueAsString(drones);
+		assertEquals(expected, response);
+	}
+	@Test
+	@DisplayName(CONTROLLER_TEST + TestDisplayNames.CHECK_BATTERY_LEVEL_ILLEGAL_NUMBER)
+	void checkBatteryLevelIllegalDroneTest () throws Exception {
+		mockMvc.perform(get(HOST + "drones/battery/{number}", WRONG_DRONE_NUMBER))
+				.andDo(print()).andExpect(status().isBadRequest())
+				.andExpect(res -> assertTrue(res.getResolvedException() instanceof ConstraintViolationException))
+				.andExpect(res -> 
+				assertEquals("checkBatteryLevel.droneNumber: size must be between 0 and 100", 
+						res.getResolvedException().getMessage()));
+	}
 	
 }
