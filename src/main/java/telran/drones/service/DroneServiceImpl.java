@@ -16,6 +16,7 @@ import telran.drones.api.*;
 
 @Service
 @RequiredArgsConstructor 
+@Transactional(readOnly=true)
 public class DroneServiceImpl implements DroneService {
 final DroneRepo droneRepo;
 final MedicationRepo medicationRepo;
