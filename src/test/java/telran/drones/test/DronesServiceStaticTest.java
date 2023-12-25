@@ -70,7 +70,8 @@ public class DronesServiceStaticTest {
 	@Test
 	@DisplayName(SERVICE_TEST + TestDisplayNames.REGISTER_DRONE_ALREDY_EXIST)
 	void registerAlreadyExistsDroneTest() {
-		assertThrowsExactly(DroneAlreadyExistException.class, () -> service.registerDrone(droneDtoAlreadyExist));
+		assertThrowsExactly(DroneAlreadyExistException.class, 
+				() -> service.registerDrone(droneDtoAlreadyExist));
 	}
 
 	@Test

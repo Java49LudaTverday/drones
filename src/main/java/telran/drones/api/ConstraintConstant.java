@@ -4,6 +4,7 @@ public interface ConstraintConstant {
 	int MAX_DRONE_NUMBER_SIZE = 100;
 	int MAX_WEIGHT = 500;
 	int MAX_BATTERY_CAPACITY = 100;
+	byte PERCENT_DECREASE_BATTERY = 2;
 	String DRONE_NUMBER_WRONG_LENGTH = "wrong drone number (incorrect length)";
 	String MISSING_DRONE_NUMBER = "missing drone number";
 	String MISSING_MODEL = "missing model";

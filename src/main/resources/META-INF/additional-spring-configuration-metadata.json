@@ -1,5 +1,12 @@
-{"properties": [{
-  "name": "app.battery.capacity.threshold",
-  "type": "java.lang.String",
-  "description": "Minimal threshold for battery level"
-}]}
+{"properties": [
+  {
+    "name": "app.battery.capacity.threshold",
+    "type": "java.lang.String",
+    "description": "Minimal threshold for battery level"
+  },
+  {
+    "name": "app.microseconds.periodic.unit",
+    "type": "java.lang.String",
+    "description": "Periodic unit for dinamic working"
+  }
+]}

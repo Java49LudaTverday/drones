@@ -13,7 +13,7 @@ public interface HistoryLogRepo extends JpaRepository<HistoryLog, Long> {
   @Query("Select hl.medication from HistoryLog hl group by drone.serialNumber")
 	List<Medication> findByDrone(String serialNumber);
   
-  @Query("Select hl from HistoryLog hl group by drone.serialNumber having drone.serialNumber=:serialNumber")
+//  @Query("Select hl from HistoryLog hl group by drone.serialNumber having drone.serialNumber=:serialNumber")
   List<HistoryLog> findByDroneSerialNumber(String serialNumber);
   
   @Query("Select d.serialNumber as number, count(medication.code) as items from HistoryLog hl "
