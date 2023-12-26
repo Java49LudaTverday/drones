@@ -21,7 +21,7 @@ import telran.drones.controller.DroneController;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+//@Transactional(readOnly = true)
 @Slf4j
 public class DroneServiceImpl implements DroneService {
 	final DroneRepo droneRepo;
@@ -67,11 +67,11 @@ public class DroneServiceImpl implements DroneService {
 		HistoryLog log = new HistoryLog(drone, medication);
 		historyLogRepo.save(log);
 		HistoryLogDto logDto = log.buildDto();
-		periodicTask(drone, medication);
 		return logDto;
 	}
 
 	@Override
+	@Transactional(readOnly = false)
 	public List<MedicationDto> getMedicationItems(String droneNumber) {
 		if (!droneRepo.existsById(droneNumber)) {
 			throw new DroneNotFoundException();
@@ -81,6 +81,7 @@ public class DroneServiceImpl implements DroneService {
 	}
 
 	@Override
+	@Transactional(readOnly = false)
 	public List<DroneDto> getAvailableDrones() {
 
 		return droneRepo.findByStateAndBatteryLevelGreaterThan(State.IDLE, capacityThreshold).stream()
@@ -88,6 +89,7 @@ public class DroneServiceImpl implements DroneService {
 	}
 
 	@Override
+	@Transactional(readOnly = false)
 	public int checkBatteryLevel(String droneNumber) {
 		Drone drone = droneRepo.findById(droneNumber).orElseThrow(() -> new DroneNotFoundException());
 
@@ -95,6 +97,7 @@ public class DroneServiceImpl implements DroneService {
 	}
 
 	@Override
+	@Transactional(readOnly = false)
 	public List<HistoryLogDto> getHistoryLog(String droneNumber) {
 		if (!droneRepo.existsById(droneNumber)) {
 			throw new DroneNotFoundException();
@@ -103,67 +106,72 @@ public class DroneServiceImpl implements DroneService {
 	}
 
 	@Override
+	@Transactional(readOnly = false)
 	public List<DroneItems> getLoadedMedicationsByDrones() {
 
 		return historyLogRepo.findNumberOfMedicationByDrones();
 	}
 
-//	@PostConstruct
-	public void periodicTask(Drone drone, Medication medication) {		 
-		Thread thread = new Thread(() -> {	
-			boolean flag = true;
-				while (flag) {
-					try {
-						Thread.sleep(millisPerTimeUnit);
-						State state = drone.getState();
-						switch(state) {
-						case LOADING ->changeState(drone, medication);
-						case LOADED -> changeState(drone, medication);
-						case DELIVERING -> changeState(drone, medication);
-						case DELIVERING1 -> changeState(drone, medication);
-						case DELIVERING2 -> changeState(drone, medication);
-						case DELIVERING3 -> changeState( drone, medication);
-						case DELIVERED -> changeState( drone, null);
-						case RETURNING -> changeState( drone, null);
-						case RETURNING1 -> changeState( drone, null);
-						case RETURNING2 -> changeState( drone, null);
-						case RETURNING3 -> changeState( drone, null);
-						case IDLE -> flag =  false;
-						default -> throw new IllegalArgumentException("Unexpected state: " + state);
-						}
-					} catch (InterruptedException e) {
-						// Interruption are not implemented
-					}
-				}
-			});
-			// TODO Processing event logs for each time unit
-			// Just stub method to be replaced with a real one in the HW#71
+	@PostConstruct
+	void periodicTask() throws InterruptedException {
+		createThreadPeriodicTask();
+	}
 
+	private void createThreadPeriodicTask() {
+		Thread thread = new Thread(() -> {
+			try {
+				Thread.sleep(2000);
+			} catch (InterruptedException e) {
+				// not implemented
+			}
+			while (true) {
+				List<Drone> drones = droneRepo.findAll();
+				drones.forEach(drone -> {
+					try {						
+						changeStateOfDrone(drone);						
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				});
+			}
+		});
 		thread.setDaemon(true);
 		thread.start();
 	}
 
-	private boolean changeState(Drone drone, Medication medication) {
-		State newState = mapStates.get(drone.getState());
-		System.out.println("NewState" +newState);
-		drone.setState(newState);
-		setNewBatteryLevel(drone);
-		droneRepo.save(drone);
-		setHistoryLog(drone, medication);
-		return true;
+	private void changeStateOfDrone(Drone drone) throws InterruptedException {
+		State state = drone.getState();
+		Thread.sleep(millisPerTimeUnit);
+		if (state != State.IDLE) {
+			State newState = mapStates.get(state);
+			drone.setState(newState);
+			decreaseBatteryLevel(drone);
+		} else {
+			increaseBatteryLevel(drone);
+		}
+	}
+
+	private void increaseBatteryLevel(Drone drone) {
+		byte butteryLevel = drone.getBatteryLevel();
+		if (butteryLevel < 99) {
+			butteryLevel += ConstraintConstant.PERCENT_DECREASE_BATTERY;
+			drone.setBatteryLevel(butteryLevel);
+			droneRepo.save(drone);
+			setHistoryLog(drone, null);
+		}
 	}
 
 	private void setHistoryLog(Drone drone, Medication medication) {
 		HistoryLog historyLog = new HistoryLog(drone, medication);
 		historyLogRepo.save(historyLog);
-		
 	}
 
-	private void setNewBatteryLevel(Drone drone) {
+	private void decreaseBatteryLevel(Drone drone) {
 		byte newLevel = (byte) (drone.getBatteryLevel() - ConstraintConstant.PERCENT_DECREASE_BATTERY);
 		drone.setBatteryLevel(newLevel);
 		droneRepo.save(drone);
-		
+		setHistoryLog(drone, null);
+
 	}
 
 }

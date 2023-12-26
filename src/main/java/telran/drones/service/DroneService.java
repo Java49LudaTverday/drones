@@ -13,5 +13,4 @@ List<DroneDto> getAvailableDrones ();
 int checkBatteryLevel (String droneNumber);
 List<HistoryLogDto> getHistoryLog (String droneNumber);
 List<DroneItems> getLoadedMedicationsByDrones();
-void periodicTask(Drone drone, Medication medication);
 }
